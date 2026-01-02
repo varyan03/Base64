@@ -10,4 +10,15 @@
  * - Proper padding handling
  * - Ignores whitespace during decoding
  * - Thread-safe (stateless)
- */
+ *
+
+public final class Base64Codec {
+  /**
+   * Base64 encoding table.
+   * Index (0–63) maps directly to Base64 characters.
+   */
+  private static final char[] ENCODE_TABLE =
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray();
+
+  
+}
