@@ -10,7 +10,7 @@
  * - Proper padding handling
  * - Ignores whitespace during decoding
  * - Thread-safe (stateless)
- *
+ */
 
 public final class Base64Codec {
   /**
@@ -60,7 +60,8 @@ public final class Base64Codec {
 
   /* ============================================================
      ENCODER
-     ============================================================ */
+     ============================================================ 
+  */
 
   /**
    * Encodes a byte array into a Base64 string.
@@ -68,16 +69,16 @@ public final class Base64Codec {
    * @param input raw binary data
    * @return Base64 encoded string
    */
-   public static String encode(byte[] input) {
-     if (input == null || input.length == 0) {
+  public static String encode(byte[] input) {
+    if (input == null || input.length == 0) {
        return "";
-     }
+    }
 
      // Each 3 bytes become 4 Base64 characters
-     int outputLength = ((input.length + 2) / 3) * 4;
-     StringBuilder output = new StringBuilder(outputLength);
+    int outputLength = ((input.length + 2) / 3) * 4;
+    StringBuilder output = new StringBuilder(outputLength);
 
-     int i = 0;
+    int i = 0;
 
      // Process input in 3-byte blocks (24 bits)
     while (i + 2 < input.length) {
@@ -117,5 +118,97 @@ public final class Base64Codec {
     }
 
     return output.toString(); 
-   }    
+  }
+
+  /* ============================================================
+     DECODER
+     ============================================================ 
+  */
+
+  /**
+   * Decodes a Base64 encoded string back into raw bytes.
+   *
+   * @param input Base64 encoded string
+   * @return decoded byte array
+   * @throws IllegalArgumentException if input is invalid
+   */
+  public static byte[] decode(String input) {
+    if (input == null) {
+      throw new IllegalArgumentException("Input cannot be null");
+    }
+
+    // Remove whitespace (RFC compliant)
+    input = input.replaceAll("\\s", "");
+
+    int length = input.length();
+    if (length == 0 || length % 4 != 0) {
+      throw new IllegalArgumentException("Invalid Base64 length");
+    }
+
+    // Count padding characters
+    int padding = 0;
+    if (length >= 2 && input.charAt(length - 1) == '=') {
+      padding++;
+      if (input.charAt(length - 2) == '=') {
+        padding++;
+      }
+    }
+
+    int outputLength = (length / 4) * 3 - padding;
+    byte[] output = new byte[outputLength];
+
+    int outIndex = 0;
+
+    // Process in 4-character blocks
+    for (int i = 0; i < length; i += 4) {
+      int c1 = decodeChar(input.charAt(i));
+      int c2 = decodeChar(input.charAt(i + 1));
+      int c3 = decodeChar(input.charAt(i + 2));
+      int c4 = decodeChar(input.charAt(i + 3));
+
+      int chunk =
+                (c1 << 18) |
+                (c2 << 12) |
+                ((c3 & 0x3F) << 6) |
+                (c4 & 0x3F);
+
+      output[outIndex++] = (byte) ((chunk >> 16) & 0xFF);
+
+      if (c3 != -2) {
+        output[outIndex++] = (byte) ((chunk >> 8) & 0xFF);
+      }
+
+      if (c4 != -2) {
+        output[outIndex++] = (byte) (chunk & 0xFF);
+      }
+    }
+
+    return output;
+  }
+  
+  /**
+     * Converts a Base64 character into its numeric value.
+     *
+     * @param ch Base64 character
+     * @return Base64 index (0–63) or -2 for padding
+     */
+    private static int decodeChar(char ch) {
+        if (ch > 255 || DECODE_TABLE[ch] == -1) {
+            throw new IllegalArgumentException(
+                    "Invalid Base64 character: '" + ch + "'"
+            );
+        }
+        return DECODE_TABLE[ch];
+    }
+  
+
+
+  /**
+   * Entry into main function.
+   *
+   * @args takes none.
+   */
+  public static void main(String[] args) {
+    
+  }   
 }
