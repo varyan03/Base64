@@ -21,14 +21,14 @@ public final class Base64Codec {
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray();
 
   /**
-     * Base64 decoding table.
-     *
-     * Index: ASCII value (0–255)
-     * Value:
-     *   0–63 → valid Base64 character
-     *   -1   → invalid character
-     *   -2   → padding '='
-     */
+   * Base64 decoding table.
+   *
+   * Index: ASCII value (0–255)
+   * Value:
+   *   0–63 → valid Base64 character
+   *   -1   → invalid character
+   *   -2   → padding '='
+   */
   private static final int[] DECODE_TABLE = new int[256];
 
   /**
@@ -47,6 +47,28 @@ public final class Base64Codec {
 
     // Padding character
     DECODE_TABLE['='] = -2;
-    }
+  }
+
+
+  /**
+   * Private constructor to prevent instantiation.
+   */
+  private Base64Codec() {
     
+  }
+  
+
+  /* ============================================================
+     ENCODER
+     ============================================================ */
+
+  /**
+   * Encodes a byte array into a Base64 string.
+   *
+   * @param input raw binary data
+   * @return Base64 encoded string
+   */
+   public static String encode(byte[] input) {
+   
+   }    
 }
