@@ -141,9 +141,14 @@ public final class Base64Codec {
     input = input.replaceAll("\\s", "");
 
     int length = input.length();
-    if (length == 0 || length % 4 != 0) {
+    if (length == 0) {
+      return new byte[0];
+    }
+
+    if (length % 4 != 0) {
       throw new IllegalArgumentException("Invalid Base64 length");
     }
+
 
     // Count padding characters
     int padding = 0;
